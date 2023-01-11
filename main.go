@@ -1,7 +1,7 @@
 package main
 
 import (
-	"mmoon/tfdoc/cmd"
+	"github.com/mathewmoon/tfdoc-html/cmd"
 )
 
 func main() {
