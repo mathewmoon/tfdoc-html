@@ -7,8 +7,8 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"mmoon/tfdoc/formatter"
-	"mmoon/tfdoc/writers"
+	"github.com/mathewmoon/tfdoc-html/formatter"
+	"github.com/mathewmoon/tfdoc-html/tfdoc/writers"
 	"os"
 
 	"github.com/spf13/cobra"

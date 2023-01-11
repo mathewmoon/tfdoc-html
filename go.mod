@@ -1,4 +1,4 @@
-module mmoon/tfdoc
+module github.com/mathewmoon/tfdoc-html
 
 go 1.18
 
