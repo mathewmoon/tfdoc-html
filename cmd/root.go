@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 Mathew Moon <me@mathewmoon.net>
 
 */
 package cmd
@@ -7,9 +7,10 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
+
 	"github.com/mathewmoon/tfdoc-html/formatter"
 	"github.com/mathewmoon/tfdoc-html/writers"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/terraform-docs/terraform-docs/format"
@@ -18,17 +19,19 @@ import (
 )
 
 type Config struct {
-	includeOutputs bool
-	markdownOnly   bool
-	s3Uri          string
-	cssFile        string
-	noStdout       bool
-	file           string
-	sourcePath     string
+	includeOutputs bool   // Will attempt to generate outputs from Terraform and include in the html
+	markdownOnly   bool   // Don't generate HTML, just markdown
+	s3Uri          string // Fully qualified S3 URI
+	cssFile        string // Path to a file of CSS to inject into the <head> of the html
+	noStdout       bool   // Don't print to stdout
+	file           string // File path to write output to
+	sourcePath     string // Directory containing your Terraform
 }
 
+/*
+Validate inputs and return a `Config`
+*/
 func parseConfig(cmd *cobra.Command, args []string) Config {
-	// validate inputs
 	include_outputs, err := cmd.Flags().GetBool("outputs")
 	if err != nil {
 		exitWithError(err, 1)
@@ -76,13 +79,10 @@ func parseConfig(cmd *cobra.Command, args []string) Config {
 	}
 }
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "tfdoc-html [PATH]",
 	Short: "Generate Terraform Docs in HTML, optionally uploading to S3 or writing to a file.",
 	Long:  ``,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
 
 		config := parseConfig(cmd, args)

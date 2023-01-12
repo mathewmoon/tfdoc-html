@@ -9,6 +9,13 @@ import (
 	"github.com/yosssi/gohtml"
 )
 
+/*
+	Converts a string to html
+	Args:
+		`data`: The document body to inject.
+		`css_file`. If `css_file` is anything other than an empty string then we will attempt to read the file
+								 and inject the contents into the style tag
+*/
 func GenerateHtml(data string, css_file string) (string, error) {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
 	parser := parser.NewWithExtensions(extensions)

@@ -22,6 +22,7 @@ func getSession() *session.Session {
 	return session
 }
 
+/* Parse a fully qualified S3 URI into a Bucket and Key */
 func ParseUri(uri string) (string, string) {
 	if !strings.HasPrefix(uri, "s3://") {
 		fmt.Printf("URI '%s' is not a valid S3 URI", uri)
@@ -36,6 +37,7 @@ func ParseUri(uri string) (string, string) {
 	return bucket, key
 }
 
+/* Upload to S3 */
 func S3Upload(uri string, data string) (*s3.PutObjectOutput, error) {
 	bucket, key := ParseUri(uri)
 
