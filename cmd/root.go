@@ -18,7 +18,7 @@ import (
 	"github.com/terraform-docs/terraform-docs/terraform"
 )
 
-type Config struct {
+type config struct {
 	includeOutputs bool   // Will attempt to generate outputs from Terraform and include in the html
 	markdownOnly   bool   // Don't generate HTML, just markdown
 	s3Uri          string // Fully qualified S3 URI
@@ -31,7 +31,7 @@ type Config struct {
 /*
 Validate inputs and return a `Config`
 */
-func parseConfig(cmd *cobra.Command, args []string) Config {
+func parseConfig(cmd *cobra.Command, args []string) config {
 	include_outputs, err := cmd.Flags().GetBool("outputs")
 	if err != nil {
 		exitWithError(err, 1)
@@ -66,16 +66,14 @@ func parseConfig(cmd *cobra.Command, args []string) Config {
 		exitWithError(errors.New("must provide [PATH] as first argument"), 1)
 	}
 
-	source_path := args[0]
-
-	return Config{
+	return config{
 		includeOutputs: include_outputs,
 		markdownOnly:   markdown_only,
 		s3Uri:          s3_uri,
 		cssFile:        css_file,
 		noStdout:       no_stdout,
 		file:           file,
-		sourcePath:     source_path,
+		sourcePath:     args[0],
 	}
 }
 
@@ -144,7 +142,7 @@ func exitWithError(msg error, code int) {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("outputs", "o", true, "Inject outputs from state file on the fly. This requires having access to the state file declared in your backend config.")
+	rootCmd.Flags().BoolP("outputs", "o", false, "Inject outputs from state file on the fly. This requires having access to the state file declared in your backend config.")
 	rootCmd.Flags().StringP("file", "f", "", "Write output to file.")
 	rootCmd.Flags().Bool("no-stdout", false, "Don't write to stdout.")
 	rootCmd.Flags().BoolP("markdown", "m", false, "Output MarkDown instead of HTML.")

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -22,30 +21,42 @@ func getSession() *session.Session {
 	return session
 }
 
+type s3Config struct {
+	bucket string `default:""`
+	key    string `default:""`
+}
+
 /* Parse a fully qualified S3 URI into a Bucket and Key */
-func ParseUri(uri string) (string, string) {
-	if !strings.HasPrefix(uri, "s3://") {
-		fmt.Printf("URI '%s' is not a valid S3 URI", uri)
-		os.Exit(3)
+func ParseUri(uri string) (s3Config, error) {
+	config := s3Config{}
+
+	parts := strings.Split(
+		strings.ReplaceAll(uri, "s3://", ""),
+		"/",
+	)
+
+	if !strings.HasPrefix(uri, "s3://") || len(parts) < 2 {
+		return s3Config{}, fmt.Errorf("URI '%s' is not a valid S3 URI", uri)
 	}
-	uri = strings.ReplaceAll(uri, "s3://", "")
-	parts := strings.Split(uri, "/")
 
-	bucket := parts[0]
-	key := strings.Join(parts[1:], "/")
+	config.bucket = parts[0]
+	config.key = strings.Join(parts[1:], "/")
 
-	return bucket, key
+	return config, nil
 }
 
 /* Upload to S3 */
 func S3Upload(uri string, data string) (*s3.PutObjectOutput, error) {
-	bucket, key := ParseUri(uri)
-
+	config, err := ParseUri(uri)
+	if err != nil {
+		return nil, err
+	}
 	session := getSession()
 
+	fmt.Println(config.key)
 	res, err := s3.New(session).PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(bucket),
-		Key:    aws.String(key),
+		Bucket: aws.String(config.bucket),
+		Key:    aws.String(config.key),
 		Body:   aws.ReadSeekCloser(bytes.NewReader([]byte(data))),
 	})
 

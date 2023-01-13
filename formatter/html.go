@@ -16,7 +16,7 @@ import (
 		`css_file`. If `css_file` is anything other than an empty string then we will attempt to read the file
 								 and inject the contents into the style tag
 */
-func GenerateHtml(data string, css_file string) (string, error) {
+func GenerateHtml(data, css_file string) (string, error) {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
 	parser := parser.NewWithExtensions(extensions)
 
