@@ -23,11 +23,7 @@ func GenerateHtml(data, css_file string) (string, error) {
 	md := []byte(data)
 	body := string(markdown.ToHTML(md, parser, nil))
 
-	var html string
-	var style string
-
-	if css_file == "" {
-		style = `
+	style := `
   	td, tr, th, table {
 			border: 1px solid black;
 			border-collapse: collapse;
@@ -49,7 +45,7 @@ func GenerateHtml(data, css_file string) (string, error) {
 		}
     `
 
-	} else {
+	if css_file != "" {
 		buf, err := ioutil.ReadFile(css_file)
 
 		if err != nil {
@@ -70,7 +66,7 @@ func GenerateHtml(data, css_file string) (string, error) {
 		</body>
 	</html>	
 	`
-	html = fmt.Sprintf(html_template, style, body)
+	html := fmt.Sprintf(html_template, style, body)
 
 	html = gohtml.Format(html)
 	return html, nil
