@@ -27,7 +27,7 @@ type s3Config struct {
 }
 
 /* Parse a fully qualified S3 URI into a Bucket and Key */
-func ParseUri(uri string) (s3Config, error) {
+func parseUri(uri string) (s3Config, error) {
 	config := s3Config{}
 
 	parts := strings.Split(
@@ -47,7 +47,7 @@ func ParseUri(uri string) (s3Config, error) {
 
 /* Upload to S3 */
 func S3Upload(uri string, data string) (*s3.PutObjectOutput, error) {
-	config, err := ParseUri(uri)
+	config, err := parseUri(uri)
 	if err != nil {
 		return nil, err
 	}
