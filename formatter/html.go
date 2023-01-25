@@ -16,12 +16,16 @@ import (
 		`css_file`. If `css_file` is anything other than an empty string then we will attempt to read the file
 								 and inject the contents into the style tag
 */
-func GenerateHtml(data, css_file string) (string, error) {
+func GenerateHtml(data, css_file string, header string) (string, error) {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
 	parser := parser.NewWithExtensions(extensions)
 
 	md := []byte(data)
 	body := string(markdown.ToHTML(md, parser, nil))
+
+	if header != "" {
+		header = fmt.Sprintf("<h1 class='header'>%s</h1>", header)
+	}
 
 	style := `
   	td, tr, th, table {
@@ -43,6 +47,9 @@ func GenerateHtml(data, css_file string) (string, error) {
 		a {
 			text-decoration: none;
 		}
+		h1.header {
+			text-align: center
+		}
     `
 
 	if css_file != "" {
@@ -63,10 +70,11 @@ func GenerateHtml(data, css_file string) (string, error) {
 		</head>
 		<body>
 			%s
+			%s
 		</body>
 	</html>	
 	`
-	html := fmt.Sprintf(html_template, style, body)
+	html := fmt.Sprintf(html_template, style, header, body)
 
 	html = gohtml.Format(html)
 	return html, nil

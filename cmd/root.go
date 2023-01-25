@@ -26,6 +26,7 @@ type config struct {
 	noStdout       bool   // Don't print to stdout
 	file           string // File path to write output to
 	sourcePath     string // Directory containing your Terraform
+	header         string // An extra header to add to HTML docs
 }
 
 /*
@@ -62,6 +63,11 @@ func parseConfig(cmd *cobra.Command, args []string) config {
 		exitWithError(err, 1)
 	}
 
+	header, err := cmd.Flags().GetString("header")
+	if err != nil {
+		exitWithError(err, 1)
+	}
+
 	if len(args) == 0 {
 		exitWithError(errors.New("must provide [PATH] as first argument"), 1)
 	}
@@ -74,6 +80,7 @@ func parseConfig(cmd *cobra.Command, args []string) config {
 		noStdout:       no_stdout,
 		file:           file,
 		sourcePath:     args[0],
+		header:         header,
 	}
 }
 
@@ -104,7 +111,7 @@ var rootCmd = &cobra.Command{
 		doc := table.Content()
 
 		if !config.markdownOnly {
-			doc, err = formatter.GenerateHtml(doc, config.cssFile)
+			doc, err = formatter.GenerateHtml(doc, config.cssFile, config.header)
 			if err != nil {
 				exitWithError(err, 1)
 			}
@@ -148,4 +155,6 @@ func init() {
 	rootCmd.Flags().BoolP("markdown", "m", false, "Output MarkDown instead of HTML.")
 	rootCmd.Flags().StringP("s3-uri", "s", "", "A full S3 uri that, if provided, the generated output will be uploaded to")
 	rootCmd.Flags().StringP("css-file", "C", "", "A file containing CSS that will be used to override the default styling")
+	rootCmd.Flags().StringP("header", "H", "", "A string to add as a header to html docs")
+
 }
